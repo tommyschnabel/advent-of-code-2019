@@ -449,6 +449,7 @@ outer:
 		t.Fatalf("Expected same intersections for swapped inputs, first difference found %v", c1)
 	}
 }
+
 func TestFindIntersectionsSteps(t *testing.T) {
 	input1 := "R8,U5,L5,D3"
 	input2 := "U7,R6,D4,L4"
