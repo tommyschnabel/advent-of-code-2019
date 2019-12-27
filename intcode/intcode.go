@@ -8,13 +8,23 @@ import (
 const (
 	opAdd      = 1
 	opMultiply = 2
+	opWriteInput = 3
+	opWriteOutput = 4
 	opStop     = 99
 
-	opWidth = 4
+	opAddMultiplyWidth = 4
+	opWriteInputWidth = 2
 
-	opInput1 = 1
-	opInput2 = 2
-	opOutput = 3
+	opAddMultiplyInput1    = 1
+	opAddMultiplyInput2    = 2
+	opAddMultiplyOutput    = 3
+	opWriteInputOutputAddr = 1
+
+)
+
+var (
+	input = make(chan int)
+	output = make(chan int)
 )
 
 func execute(opsPtr *[]int) error {
@@ -31,24 +41,40 @@ func execute(opsPtr *[]int) error {
 			return errors.New("PC somehow got moved past end of ops")
 		}
 
-		if ops[pc] == opStop {
+		//TODO Implement parameter modes and parameter addressing cleanup in general
+		paramMode := ops[pc] / 100
+		opCode := ops[pc] % 100
+
+		switch  opCode {
+		case opAdd, opMultiply:
+
+			inputAddr1 := ops[pc +opAddMultiplyInput1]
+			inputAddr2 := ops[pc +opAddMultiplyInput2]
+			outputAddr := ops[pc +opAddMultiplyOutput]
+
+			var result int
+			if ops[pc] == opAdd {
+				result = ops[inputAddr1] + ops[inputAddr2]
+			} else { // opMultiply
+				result = ops[inputAddr1] * ops[inputAddr2]
+			}
+
+			ops[outputAddr] = result
+			pc += opAddMultiplyWidth
+
+		case opWriteInput:
+			outputAddr := ops[pc +opWriteInputOutputAddr]
+			ops[outputAddr] = <-input
+
+		case opWriteOutput:
+			outputAddr := ops[pc +opWriteInputOutputAddr]
+			output <- ops[outputAddr]
+
+		case opStop:
 			return nil
-		}
-
-		inputAddr1 := ops[pc + opInput1]
-		inputAddr2 := ops[pc + opInput2]
-		outputAddr := ops[pc + opOutput]
-
-		switch ops[pc] {
-		case opAdd:
-			ops[outputAddr] = ops[inputAddr1] + ops[inputAddr2]
-		case opMultiply:
-			ops[outputAddr] = ops[inputAddr1] * ops[inputAddr2]
 		default:
 			return fmt.Errorf("unknown op code %d", ops[pc])
 		}
-
-		pc += opWidth
 	}
 
 	return nil
