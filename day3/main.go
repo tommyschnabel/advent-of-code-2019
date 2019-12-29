@@ -151,12 +151,12 @@ func findIntersections(input1, input2 string) ([]intersection, error) {
 
 	// Visit every point in line1
 	for i, c := range line1 {
-		visit(c, visitedPoints, i + 1)
+		visit(c, visitedPoints, i+1)
 	}
 
 	// Visit points in line2 to see if line1 has been there
 	for i, c := range line2 {
-		if isIntersection, totalSteps := visit(c, visitedPoints, i + 1); isIntersection && c != (coord{0, 0}) {
+		if isIntersection, totalSteps := visit(c, visitedPoints, i+1); isIntersection && c != (coord{0, 0}) {
 			intersections = append(intersections, intersection{coord: c, steps: totalSteps})
 		}
 	}

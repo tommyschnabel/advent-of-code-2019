@@ -6,24 +6,23 @@ import (
 )
 
 const (
-	opAdd      = 1
-	opMultiply = 2
-	opWriteInput = 3
+	opAdd         = 1
+	opMultiply    = 2
+	opWriteInput  = 3
 	opWriteOutput = 4
-	opStop     = 99
+	opStop        = 99
 
 	opAddMultiplyWidth = 4
-	opWriteInputWidth = 2
+	opWriteInputWidth  = 2
 
 	opAddMultiplyInput1    = 1
 	opAddMultiplyInput2    = 2
 	opAddMultiplyOutput    = 3
 	opWriteInputOutputAddr = 1
-
 )
 
 var (
-	input = make(chan int)
+	input  = make(chan int)
 	output = make(chan int)
 )
 
@@ -45,12 +44,12 @@ func execute(opsPtr *[]int) error {
 		paramMode := ops[pc] / 100
 		opCode := ops[pc] % 100
 
-		switch  opCode {
+		switch opCode {
 		case opAdd, opMultiply:
 
-			inputAddr1 := ops[pc +opAddMultiplyInput1]
-			inputAddr2 := ops[pc +opAddMultiplyInput2]
-			outputAddr := ops[pc +opAddMultiplyOutput]
+			inputAddr1 := ops[pc+opAddMultiplyInput1]
+			inputAddr2 := ops[pc+opAddMultiplyInput2]
+			outputAddr := ops[pc+opAddMultiplyOutput]
 
 			var result int
 			if ops[pc] == opAdd {
@@ -63,11 +62,11 @@ func execute(opsPtr *[]int) error {
 			pc += opAddMultiplyWidth
 
 		case opWriteInput:
-			outputAddr := ops[pc +opWriteInputOutputAddr]
+			outputAddr := ops[pc+opWriteInputOutputAddr]
 			ops[outputAddr] = <-input
 
 		case opWriteOutput:
-			outputAddr := ops[pc +opWriteInputOutputAddr]
+			outputAddr := ops[pc+opWriteInputOutputAddr]
 			output <- ops[outputAddr]
 
 		case opStop:
