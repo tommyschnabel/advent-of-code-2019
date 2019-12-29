@@ -4,6 +4,18 @@ GO111MODULE=on
 
 .PHONY: install check build
 
+help:
+	@echo 'Usage: make <OPTIONS> ... <TARGETS>'
+	@echo ''
+	@echo 'Available targets are:'
+	@echo ''
+	@echo '    help               Show this help screen.'
+	@echo '    install            Install tools.'
+	@echo '    build              Build go files.'
+	@echo '    check              Run lots of checks on go code.'
+	@echo ''
+	@echo 'Targets run by default are: install, check, and build.'
+
 .PHONY:
 install:
 	@go get golang.org/x/tools/cmd/goimports
